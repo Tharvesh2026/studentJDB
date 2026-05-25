@@ -39,6 +39,18 @@ public class StudentService {
         return false;
     }
 
+    public boolean updateStudent(int id, String name, int age) {
+        Student student = findStudentById(id);
+
+        if (student != null) {
+            student.setName(name);
+            student.setAge(age);
+            return true;
+        }
+
+        return false;
+    }
+
     public void setStudents(List<Student> students) {
         this.students = new ArrayList<>(students);
     }

@@ -1,5 +1,7 @@
 package project.intern;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,49 +11,25 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-
 public class FileManager {
 
     public static void saveStudents(List<Student> students, String fileName) {
 
-    Path path = Paths.get(fileName);
-    boolean writeHeader = true;
-    try {
-        if (Files.exists(path)) {
-            writeHeader = Files.size(path) == 0;
-        }
-    } catch (IOException e) {
-        // If we cannot determine the size, default to writing header to be safe
-        writeHeader = true;
-    }
-
-    try (
-        FileWriter writer = new FileWriter(fileName, true);
-        CSVPrinter csvPrinter = new CSVPrinter(
-            writer,
-            writeHeader
-                ? CSVFormat.DEFAULT.withHeader("ID", "Name", "Age")
-                : CSVFormat.DEFAULT
-        )
-    ) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            writer.write("ID,Name,Age");
+            writer.newLine();
 
             for (Student student : students) {
-                writer.write(student.toString() + "\n");
+                writer.write(student.getId() + "," + student.getName() + "," + student.getAge());
+                writer.newLine();
             }
 
+            writer.flush();
             System.out.println("Students saved to file successfully.");
 
         } catch (IOException e) {
-
             System.out.println("Error: " + e.getMessage());
         }
-
-        return loaded;
     }
 
     public static List<Student> loadStudents(String fileName) {
@@ -65,28 +43,19 @@ public class FileManager {
 
         List<Student> loaded = new ArrayList<>();
 
-        try (
-                FileReader reader = new FileReader(fileName);
-                CSVParser csvParser = new CSVParser(
-                        reader,
-                        CSVFormat.DEFAULT
-                                .withHeader("ID", "Name", "Age")
-                                .withFirstRecordAsHeader()
-                                .withIgnoreHeaderCase()
-                                .withTrim()
-                )
-        ) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line = reader.readLine();
+            if (line == null) {
+                return loaded;
+            }
 
-            for (CSVRecord record : csvParser) {
-                try {
-                    int id = Integer.parseInt(record.get("ID"));
-                    String name = record.get("Name");
-                    int age = Integer.parseInt(record.get("Age"));
-                    loaded.add(new Student(id, name, age));
-                } catch (IllegalArgumentException e) {
-                    // covers missing headers and parse errors (NumberFormatException is a subtype)
-                    System.out.println("Skipping invalid row in " + fileName + ": " + record);
-                }
+            boolean isHeader = line.trim().equalsIgnoreCase("ID,Name,Age");
+            if (!isHeader) {
+                parseRow(line, loaded, fileName);
+            }
+
+            while ((line = reader.readLine()) != null) {
+                parseRow(line, loaded, fileName);
             }
 
         } catch (IOException e) {
@@ -94,6 +63,23 @@ public class FileManager {
         }
 
         return loaded;
+    }
+
+    private static void parseRow(String line, List<Student> loaded, String fileName) {
+        String[] tokens = line.split(",", -1);
+        if (tokens.length < 3) {
+            System.out.println("Skipping invalid row in " + fileName + ": " + line);
+            return;
+        }
+
+        try {
+            int id = Integer.parseInt(tokens[0].trim());
+            String name = tokens[1].trim();
+            int age = Integer.parseInt(tokens[2].trim());
+            loaded.add(new Student(id, name, age));
+        } catch (NumberFormatException e) {
+            System.out.println("Skipping invalid row in " + fileName + ": " + line);
+        }
     }
 }
 
