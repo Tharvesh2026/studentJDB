@@ -50,4 +50,8 @@ public class StudentService {
 
         return false;
     }
+
+    public void setStudents(List<Student> students) {
+        this.students = new ArrayList<>(students);
+    }
 }
