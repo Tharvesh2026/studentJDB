@@ -12,19 +12,32 @@ public class FileManager {
 
     public static void saveStudents(List<Student> students, String fileName) {
 
-        try (FileWriter writer = new FileWriter(fileName)) {
+        try (
+                FileWriter writer = new FileWriter(fileName, true);
+                CSVPrinter csvPrinter = new CSVPrinter(
+                        writer,
+                        CSVFormat.DEFAULT.withHeader("ID", "Name", "Age")
+                )
+        ) {
 
             for (Student student : students) {
-                writer.write(student.toString() + "\n");
+
+                csvPrinter.printRecord(
+                        student.getId(),
+                        student.getName(),
+                        student.getAge()
+                );
             }
 
-            System.out.println("Students saved to file successfully.");
+            csvPrinter.flush();
+
+            System.out.println("Students saved successfully.");
 
         } catch (IOException e) {
-            System.out.println("Error writing file: " + e.getMessage());
+
+            System.out.println("Error: " + e.getMessage());
         }
     }
 }
-
 
 
