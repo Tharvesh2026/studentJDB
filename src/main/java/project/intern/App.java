@@ -138,6 +138,11 @@ public class App {
                     break;
 
                 case 7:
+                    System.out.println("Saving students to students.csv before exit...");
+                    FileManager.saveStudents(
+                        service.getAllStudents(),
+                        "students.csv"
+                    );
                     System.out.println("Exiting application.");
                     scanner.close();
                     System.exit(0);
