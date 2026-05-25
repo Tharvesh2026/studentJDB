@@ -27,6 +27,18 @@ public class StudentService {
         return null;
     }
 
+    public boolean updateStudent(int id, String name, int age) {
+        Student student = findStudentById(id);
+
+        if (student != null) {
+            student.setName(name);
+            student.setAge(age);
+            return true;
+        }
+
+        return false;
+    }
+
     public boolean deleteStudent(int id) {
 
         Student student = findStudentById(id);

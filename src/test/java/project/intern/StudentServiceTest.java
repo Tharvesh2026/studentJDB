@@ -49,4 +49,24 @@ public class StudentServiceTest {
 
         assertTrue(deleted);
     }
+
+    @Test
+    public void testUpdateStudent() {
+
+        StudentService service = new StudentService();
+
+        Student student = new Student(4, "Priya", 19);
+
+        service.addStudent(student);
+
+        boolean updated = service.updateStudent(4, "Priya K.", 20);
+
+        assertTrue(updated);
+
+        Student found = service.findStudentById(4);
+
+        assertNotNull(found);
+        assertEquals("Priya K.", found.getName());
+        assertEquals(20, found.getAge());
+    }
 }

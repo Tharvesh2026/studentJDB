@@ -17,9 +17,10 @@ public class App {
             System.out.println("1. Add Student");
             System.out.println("2. View Students");
             System.out.println("3. Search Student");
-            System.out.println("4. Delete Student");
-            System.out.println("5. Save to File");
-            System.out.println("6. Exit");
+            System.out.println("4. Update Student");
+            System.out.println("5. Delete Student");
+            System.out.println("6. Save to File");
+            System.out.println("7. Exit");
 
             System.out.print("Enter choice: ");
 
@@ -80,6 +81,29 @@ public class App {
 
                 case 4:
 
+                    System.out.print("Enter Student ID to update: ");
+                    int updateId = scanner.nextInt();
+
+                    scanner.nextLine();
+
+                    System.out.print("Enter new Name: ");
+                    String newName = scanner.nextLine();
+
+                    System.out.print("Enter new Age: ");
+                    int newAge = scanner.nextInt();
+
+                    boolean updated = service.updateStudent(updateId, newName, newAge);
+
+                    if (updated) {
+                        System.out.println("Student updated successfully.");
+                    } else {
+                        System.out.println("Student not found.");
+                    }
+
+                    break;
+
+                case 5:
+
                     System.out.print("Enter Student ID to delete: ");
 
                     int deleteId = scanner.nextInt();
@@ -94,7 +118,7 @@ public class App {
 
                     break;
 
-                case 5:
+                case 6:
 
                     FileManager.saveStudents(
                             service.getAllStudents(),
@@ -103,7 +127,7 @@ public class App {
 
                     break;
 
-                case 6:
+                case 7:
 
                     System.out.println("Exiting application.");
 
