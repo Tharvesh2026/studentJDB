@@ -14,11 +14,22 @@ public class App {
         while (true) {
 
             System.out.println("\nStudent Management System");
+
+            System.out.print("Loaded from students.csv");
+            String loadFile = "students.csv";
+            List<Student> loadedStudents = FileManager.loadStudents(loadFile);
+            if (loadedStudents.isEmpty()) {
+                System.out.println("No students loaded from " + loadFile + ".");
+            } else {
+                service.setStudents(loadedStudents);
+                System.out.println("Loaded " + loadedStudents.size() + " students from " + loadFile + ".");
+            }
+
             System.out.println("1. Add Student");
             System.out.println("2. View Students");
             System.out.println("3. Search Student");
-            System.out.println("4. Delete Student");
-            System.out.println("5. Save to File");
+            System.out.println("4. Update Student");
+            System.out.println("5. Delete Student");
             System.out.println("6. Exit");
 
             System.out.print("Enter choice: ");
@@ -94,19 +105,13 @@ public class App {
 
                     break;
 
-                case 5:
-
-                    FileManager.saveStudents(
-                            service.getAllStudents(),
-                            "students.csv"
-                    );
-
-                    break;
-
                 case 6:
-
+                    System.out.println("Saving students to students.csv...");
+                     FileManager.saveStudents(
+                        service.getAllStudents(),
+                        "students.csv"
+                    );
                     System.out.println("Exiting application.");
-
                     scanner.close();
 
                     System.exit(0);
