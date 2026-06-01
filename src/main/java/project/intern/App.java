@@ -11,6 +11,9 @@ public class App {
 
         StudentService service = new StudentService();
 
+        String environment = System.getProperty("environment", "DEVELOPMENT");
+        System.out.println("Running in " + environment + " mode");
+
         String loadFile = "students.csv";
         System.out.println("Loading from " + loadFile + "...");
         List<Student> loadedStudents = FileManager.loadStudents(loadFile);
